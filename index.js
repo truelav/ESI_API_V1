@@ -21,9 +21,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // to serve files from uploads directory
-// app.use("/static", express.static("static"));
+app.use("/static", express.static("static"));
 
-// app.use("/api", allRoutes);
+app.use("/api", allRoutes);
 app.use('/', (req, res) => {
     res.send('Welcome to ESI Server')
 })
