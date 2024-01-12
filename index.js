@@ -24,9 +24,10 @@ app.use(cookieParser());
 app.use("/static", express.static("static"));
 
 app.use("/api", allRoutes);
-app.use('/', (req, res) => {
-    res.send('Welcome to ESI Server')
-})
+
+// app.use('/', (req, res) => {
+//     res.send('Welcome to ESI Server')
+// })
 
 // Error Middleware
 app.use(errorHandlerMiddleware);
