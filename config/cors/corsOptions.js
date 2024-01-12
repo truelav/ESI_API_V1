@@ -11,7 +11,3 @@ export const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200,
 };
-// 
-
-// /mongodb+srv://sergheimadan:0mdWQEQYpipRXZnG@esidb.xyedrqk.mongodb.net/
-
