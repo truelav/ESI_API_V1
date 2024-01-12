@@ -1,0 +1,24 @@
+{
+    "addProductData": {
+        "brand": "TestBrand",
+        "model": "TestModel",
+        "description": "TestDescription",
+        "category": "TestCategory",
+        "subcategory": "TestSubcategory",
+        "upc": "TestUPC",
+        "price": 15,
+        "quantity": 10,
+        "images": ""
+    }, 
+    "editProductData": {
+        "brand": "TestBrandEdit",
+        "model": "TestModelEdit",
+        "description": "TestDescription Edit",
+        "category": "TestCategory Edit",
+        "subcategory": "TestSubcategoryEdit",
+        "upc": "TestUPCEdit",
+        "price": 115,
+        "quantity": 105,
+        "images": ""
+    }
+}
