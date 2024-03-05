@@ -1,18 +1,21 @@
-import mongoose from "mongoose";
-import env from "dotenv";
+import mongoose from 'mongoose';
+import env from 'dotenv';
 
 const dotenv = env.config();
-const devConnection = process.env.MONGODB_STRING;
-console.log(devConnection)
-// const prodConnection = process.env.DB_STRING_PROD;
-
+const prodConnection = process.env.MONGODB_STRING;
+const NODE_ENV = process.env.NODE_ENV;
 
 const connectDB = async () => {
   try {
-    mongoose.set("strictQuery", false);
+    if (NODE_ENV === 'development') {
+      console.log('Connect to Development DB');
+    } else {
+      console.log('Connect to Production DB');
+    }
+    mongoose.set('strictQuery', false);
     await mongoose.connect(process.env.MONGODB_STRING);
 
-    console.log("Connected to the DB");
+    console.log('Connected to the DB');
   } catch (err) {
     console.log(err);
   }
