@@ -4,6 +4,7 @@
   "description": "ESI Inventory Management and Presentation APp",
   "main": "index.js",
   "scripts": {
+    "start": "index.js",
     "pm2": "pm2 start index.js",
     "start:server": "nodemon index.js",
     "test": "jest --detectOpenHandles",
