@@ -1,7 +1,7 @@
 import fs from "fs";
 import createError from 'http-errors';
 import { HTTPStatusCodes } from '../../utils/constants.js';
-import Product from "../../models/Product/Product.js";
+import Product from "../../models/Product/Product.Schema.js";
 
 // const unlinkAsync = promisify(fs.unlink)
 

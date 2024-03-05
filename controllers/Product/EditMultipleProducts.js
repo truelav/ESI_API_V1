@@ -1,6 +1,6 @@
 import createError from 'http-errors';
 import { HTTPStatusCodes } from '../../utils/constants.js';
-import Product from "../../models/Product/Product.js";
+import Product from "../../models/Product/Product.Schema.js";
 
 export const editMultipleProducts = async (req, res) => {
     try {

@@ -13,7 +13,6 @@ const OrderSchema = new Schema({
     orderSummary: {
         totalAmount: {
             type: Number,
-            required: true,
         },
         totalProducts: {
             type: Number,
@@ -25,7 +24,7 @@ const OrderSchema = new Schema({
             product: Object,
             cartQuantity: {
                 type: Number,
-                required: true,
+                default: 1
             },
         },
     ]}, 

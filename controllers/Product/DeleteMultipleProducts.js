@@ -1,7 +1,7 @@
 import fs from 'fs';
 import createError from 'http-errors';
 import { HTTPStatusCodes } from '../../utils/constants.js';
-import Product from "../../models/Product/Product.js";
+import Product from "../../models/Product/Product.Schema.js";
 
 export const deleteMultipleProducts = async (req, res, next) => {
   console.log(req.body)
@@ -13,6 +13,7 @@ export const deleteMultipleProducts = async (req, res, next) => {
     }
 
     const deletedProducts = []
+    
     const findAndDeleteProducts = async(id) => {
       let product = await Product.findById(id);
 

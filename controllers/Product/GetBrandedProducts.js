@@ -1,37 +1,49 @@
 import createError from 'http-errors';
 import { HTTPStatusCodes } from '../../utils/constants.js';
-import Product from "../../models/Product/Product.js";
+import Product from "../../models/Product/Product.Schema.js";
+import { transformProductsForPresentation } from '../../utils/transformPrice.js';
 
 export const getBrandedProducts = async (req, res, next) => {
   try {
-    const allProducts = await Product.find({});
+    const products = await Product.find({});
 
-    if(!allProducts){
+    if(!products){
       res.status(400).json({message: "no products found", allProducts: []})
     }
 
-    // Modify the response data as needed
-    const groupedProducts = {};
+    const transformedProducts = transformProductsForPresentation(products)
 
-    allProducts.forEach((product) => {
-        const { brand } = product;
+    if(!transformedProducts){
+      res.status(400).json({message: "no products found", allProducts: []})
+    }
 
-        groupedProducts[brand] = [];
-        groupedProducts[brand].push(product);
-    });
-
-    // // Convert the grouped products into an array of objects
-    const transformedData = Object.entries(groupedProducts).map(
-        ([brand, products]) => ({
-            brand,
-            products,
-        })
-    );
-
-    res.status(200).json(transformedData);
+    res.status(200).json(transformedProducts);
     
   } catch (error) {
     console.log(error)
     next(createError(HTTPStatusCodes.InternalServerError, error.message));
   }
 };
+
+export const getTransformedProductsBy = async (req, res, next) => {
+  try{
+    const { transformBy } = req.body
+    const products = await Product.find({});
+
+    if(!products){
+      res.status(400).json({message: "no products found", allProducts: []})
+    }
+
+    const transformedProducts = transformProductsForPresentation(products, transformBy)
+
+    if(!transformedProducts){
+      res.status(400).json({message: "no products found", allProducts: []})
+    }
+
+    res.status(200).json(transformedProducts);
+
+  } catch(error){
+    console.log(error)
+    next(createError(HTTPStatusCodes.InternalServerError, error.message))
+  }
+}

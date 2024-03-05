@@ -27,6 +27,7 @@ export const register = async (req, res, next) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    
     const newUser = new User({
       name,
       email,
@@ -63,19 +64,68 @@ export const register = async (req, res, next) => {
   }
 };
 
-
-export const login = async (req, res) => {
-  const { email, password } = req.body;
+export const signup = async (req, res, next) => {
   try {
+    const { fullname, company, phone, email, password } = req.body;
+
     const user = await User.findOne({ email });
+
+    if (user) {
+      return next(createError(HTTPStatusCodes.ExistsAlready, `user with ${email} already exists`))
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    const newUser = new User({
+      name: fullname,
+      company,
+      phone,
+      email,
+      role: "CUSTOMER",
+      password: hashedPassword,
+      isActive: false
+    });
+
+    await newUser.save();
+
+    res.status(201).json({
+      message: `$Dear ${fullname}, your account was created, we will review your application shortly`,
+      body: {
+        company,
+        phone,
+        email
+      }
+    });
+
+  } catch(error){
+    next(createError(HTTPStatusCodes.InternalServerError, error.message));
+  }
+}
+
+export const login = async (req, res, next) => {
+
+  const { email, password } = req.body;
+
+  try {
+
+    const user = await User.findOne({ email });
+
     if (!user) {
-      return next(createError(HTTPStatusCodes.NotFound, `User with ${email} not found`))
+      next(createError(HTTPStatusCodes.NotFound, `User with ${email} not found`))
+      return
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user?.password);
 
     if (!isPasswordCorrect) {
-      return next(createError(HTTPStatusCodes.Forbidden, `password or email are incorrect or does not match`))
+      next(createError(HTTPStatusCodes.Forbidden, `Password or Email are incorrect or do not match`))
+      return
+    }
+
+    if (!user.isActive) {
+      next(createError(HTTPStatusCodes.Forbidden, `Your account is not active, please contact us to activate it`))
+      return
     }
 
     const role = user.role;
@@ -93,6 +143,7 @@ export const login = async (req, res) => {
       refreshToken,
       userDto,
     });
+    return
   } catch (error) {
     next(createError(HTTPStatusCodes.InternalServerError, error.message));
   }
@@ -109,7 +160,7 @@ export const logout = async (req, res, next) => {
 
     const token = await deleteToken(refreshToken);
     res.clearCookie("refreshToken");
-    res.status(200).json({ message: "Logout success", token });
+    return res.status(200).json({ message: "Logout success", token });
   } catch (error) {
     next(createError(HTTPStatusCodes.InternalServerError, error.message));
   }
@@ -141,6 +192,7 @@ export const refresh = async (req, res, next) => {
       httpOnly: true,
       secure: true,
     });
+
     return res.json({
       userDto,
       accessToken: tokens.accessToken,
@@ -156,7 +208,7 @@ export const getUsers = async (req, res, next) => {
     const users = await User.find({});
 
     if (!users) {
-      res.status(400).json({ message: "no users found", users: [] });
+      return res.status(400).json({ message: "no users found", users: [] });
     }
 
     return res.json(users);
@@ -171,10 +223,10 @@ export const getSingleUser = async (req, res, next) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      res.status(400).json({ message: "no user found", user: {} });
+      return res.status(400).json({ message: "no user found", user: {} });
     }
 
-    return res.json(user);
+    return res.status(200).json(user);
   } catch (error) {
     next(createError(HTTPStatusCodes.InternalServerError, error.message));
   }
@@ -186,19 +238,64 @@ export const deleteUser = async (req, res, next) => {
     const user = await User.findByIdAndDelete(userId);
 
     if (!user) {
-      return next(createError(HTTPStatusCodes.NotFound, `No use found`))
+      return next(createError(HTTPStatusCodes.NotFound, `User not found`))
     }
 
     const userDto = new UserDto(user);
 
     const emailResult = await sendDeleteUserEmail(user.email)
 
-    return res.json({ message: `user ${user.email} deleted success`, userDto });
+    return res.json({ message: `user ${user.email} deleted success`, emailResult });
   } catch (error) {
     next(createError(HTTPStatusCodes.InternalServerError, error.message));
   }
 };
 
+export const editUser = async (req, res, next) => {
+  try {
+      const { name, email, password} = req.body
+      
+  } catch (error) {
+    next(createError(HTTPStatusCodes.InternalServerError, error.message));
+  }
+};
 
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body
+    const user = await User.findOne({ email });
 
+    if (!user) {
+      return res.status(400).json({ message: "no users found", users: [] });
+    }
 
+    // resetPasswordService
+
+    // Send the email to user that the password was reseted
+    res.status(200).json({ message: `Dear ${email} your password was reseted succes, please check your email` })
+
+  } catch(error){
+    next(createError(HTTPStatusCodes.InternalServerError, error.message));
+  }
+}
+
+export const activateDeactivateUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    console.log(req.body)
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return next(createError(HTTPStatusCodes.NotFound, `User not found`))
+    }
+
+    let isUserActive = !user.isActive
+    const updatedUser = await User.findOneAndUpdate({ _id: userId }, { isActive: isUserActive })
+
+    // Update user about his account update email service
+
+    return res.json({ message: `user ${user.email} was ${isUserActive? "activated" : "deactivated"}` });
+  } catch (error) {
+    next(createError(HTTPStatusCodes.InternalServerError, error.message));
+  }
+}

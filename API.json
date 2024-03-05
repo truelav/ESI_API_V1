@@ -1,0 +1,33 @@
+{
+    "domain": {},
+    "info": {},
+    "api": [
+        {
+            "name": "auth",
+            "requests": [
+                {
+                    "name": "register",
+                    "method": "POST",
+                    "url": "/api/auth/register"
+                },
+                {
+                    "name": "login",
+                    "method": "POST",
+                    "url": "/api/auth/login"
+                },
+                {
+                    "name": "logout",
+                    "method": "POST",
+                    "url": "/api/auth/register"
+                }
+            ]
+        }
+    ],
+    "": {
+        "/auth": {},
+        "/cart": {},
+        "/orders": {},
+        "/products": {},
+        "/presentation": {}
+    }
+}

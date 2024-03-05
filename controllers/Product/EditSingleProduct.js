@@ -1,44 +1,24 @@
 import createError from 'http-errors';
 import { HTTPStatusCodes } from '../../utils/constants.js';
-import Product from "../../models/Product/Product.js";
+import { editProductService } from '../../services/products_service.js';
 
-export const editSingleProduct = async (req, res) => {
+export const editSingleProduct = async (req, res, next) => {
 
-    const {
-        _id,
-        name,
-        brand,
-        model,
-        price,
-        description,
-        category,
-        subcategory,
-        quantity,
-        upc,
-        images
-    } = req.body;
-    console.log(req.body)
     try {
-        console.log("request file: " + req.file);
+        const data = req.body
+        console.log('file: ' + req.file)
 
-        await Product.findOneAndUpdate(
-            {_id},
-            {
-                _id,
-                name,
-                brand,
-                model,
-                price,
-                description,
-                category,
-                subcategory,
-                quantity,
-                images: "http://localhost:8888/static/images/" + req.file?.filename,
-                upc,
-            },
-        )
+        if(req.file){
+            data.images = "http://localhost:8888/static/images/" + req.file?.filename
+        }
 
-        res.status(200).json({ message: `Product ${name, brand} modified successfully` });
+        const updatedProduct = await editProductService(data)
+
+        if(!updatedProduct){
+            res.status(400).json({ message: 'something went wrong updating product', updatedProduct })
+        }
+
+        res.status(200).json({ message: `Product ${updatedProduct.brand} - ${updatedProduct.model} modified successfully`, updatedProduct });
 
     } catch(error){
         console.log(error)

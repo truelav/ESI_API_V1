@@ -2,7 +2,7 @@ import createError from 'http-errors';
 import fs from "fs";
 import { promisify } from "util"
 import { HTTPStatusCodes } from '../../utils/constants.js';
-import Product from "../../models/Product/Product.js";
+import Product from "../../models/Product/Product.Schema.js";
 
 export const deleteProductImage = async (req, res) => {
     try {

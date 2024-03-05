@@ -5,6 +5,8 @@ export default class UserError extends Error {
         super(message)
         this.errorCode = errorCode
         this.statusCode = statusCode
+
+        Error.captureStackTrace(this, this.constructor);
     }
 
     static UserExistAlready(email){
