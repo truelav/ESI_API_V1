@@ -1,5 +1,6 @@
 import env from 'dotenv';
 import createError from 'http-errors';
+import Product from '../../models/Product/Product.Schema.js';
 import { HTTPStatusCodes } from '../../utils/constants.js';
 import { editProductService } from '../../services/products_service.js';
 
@@ -10,26 +11,16 @@ const STATIC_URL_PRODUCTION = process.env.STATIC_URL_PRODUCTION;
 
 export const editSingleProduct = async (req, res, next) => {
   try {
-    const data = req.body;
-    console.log('file: ' + req.file);
-
-    if (req.file) {
-      if (NODE_ENV === 'development') {
-        data.images = STATIC_URL_DEVELOPMENT + '/images/' + req.file.filename;
-      } else {
-        data.images = STATIC_URL_PRODUCTION + '/images' + req.file.filename;
-      }
-      // data.images = 'https://esi-api-v1.onrender.com/static/images/' + req.file?.filename;
-    }
-
-    const updatedProduct = await editProductService(data);
+    const { _id } = req.body;
+    const updatedProduct = await editProductService(req.body, req.file);
+    const updatedProductResult = await Product.findOneAndUpdate({ _id }, { ...updatedProduct });
 
     if (!updatedProduct) {
       res.status(400).json({ message: 'something went wrong updating product', updatedProduct });
     }
 
     res.status(200).json({
-      message: `Product ${updatedProduct.brand} - ${updatedProduct.model} modified successfully`,
+      message: `Product ${updatedProductResult.brand} - ${updatedProductResult.model} modified successfully`,
       updatedProduct,
     });
   } catch (error) {

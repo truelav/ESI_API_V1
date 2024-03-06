@@ -12,6 +12,7 @@ export const createFilename = () => {
 export const checkIfFileExists = () => {};
 
 export const deleteImage = async (images) => {
+  console.log(images);
   if (!images) return;
 
   const imagePath = images.slice(22);

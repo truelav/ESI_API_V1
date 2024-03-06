@@ -1,52 +1,62 @@
-import fs from "fs";
-import Product from "../models/Product/Product.Schema.js";
+import fs from 'fs';
+import env from 'dotenv';
+import Product from '../models/Product/Product.Schema.js';
+import { deleteImage } from '../utils/files/files.js';
+
+const NODE_ENV = process.env.NODE_ENV;
+const STATIC_URL_DEVELOPMENT = process.env.STATIC_URL_DEVELOPMENT;
+const STATIC_URL_PRODUCTION = process.env.STATIC_URL_PRODUCTION;
 
 export const findProductService = async (data) => {
-  const product = await Product.findById(data)
-  return product
-}
+  const product = await Product.findById(data);
+  return product;
+};
 
-export const updateProductService = (product) => {
-  const { features } = product
+export const updateProductImageService = (product, imageFile) => {
+  if (imageFile) {
+    if (NODE_ENV === 'development') {
+      images = STATIC_URL_DEVELOPMENT + '/images/' + imageFile.filename;
+    } else {
+      images = STATIC_URL_PRODUCTION + '/images/' + imageFile.filename;
+    }
+  }
 
-  const updatedFeatures = JSON.parse(features)
-  product.features = updatedFeatures
+  return images;
+};
 
-  return product
-}
+export const updateProductInfoService = (product, imageFile) => {
+  const { model, brand, description, category, upc, price, quantity, features } = product;
+  const images = updateProductImageService(product, imageFile);
 
-export const editProductService = async (product) => {
+  const updatedFeatures = JSON.parse(features);
+  const newProduct = {
+    ...product,
+    model,
+    brand,
+    description,
+    category,
+    upc,
+    price,
+    images,
+    quantity,
+    features: updatedFeatures,
+  };
+  return newProduct;
+};
 
-  const newProduct = updateProductService(product)
-  const { _id } = product
+export const editProductService = async (product, imageFile) => {
+  let updatedProduct = updateProductInfoService(product, imageFile);
 
-  const updatedProduct = await Product.findOneAndUpdate({_id},{ ...newProduct })
-
-  return updatedProduct
-}
+  return updatedProduct;
+};
 
 export const findAllProductsById = async ({ IDs }) => {
   const productDetails = await Product.find({ _id: { $in: prodIDs } });
 
   if (!productDetails) {
-    res
-      .status(300)
-      .json({ message: "Oooops something went wrong in Database" });
+    res.status(300).json({ message: 'Oooops something went wrong in Database' });
     return;
   }
 
   return productDetails;
-};
-
-export const deleteProductImage = async ({ product }) => {
-  // const [] = fileLink.split("-")
-  console.log(product);
-  const { images } = product;
-  return fs.unlink(images, (err) => {
-    if (err) {
-      return err;
-    }
-
-    return true;
-  });
 };
