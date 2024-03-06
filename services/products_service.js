@@ -13,6 +13,7 @@ export const findProductService = async (data) => {
 };
 
 export const updateProductImageService = (product, imageFile) => {
+  let images = product.images;
   if (imageFile) {
     if (NODE_ENV === 'development') {
       images = STATIC_URL_DEVELOPMENT + '/images/' + imageFile.filename;

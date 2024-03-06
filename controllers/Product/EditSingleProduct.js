@@ -12,6 +12,7 @@ const STATIC_URL_PRODUCTION = process.env.STATIC_URL_PRODUCTION;
 export const editSingleProduct = async (req, res, next) => {
   try {
     const { _id } = req.body;
+    console.log(req.body);
     const updatedProduct = await editProductService(req.body, req.file);
     const updatedProductResult = await Product.findOneAndUpdate({ _id }, { ...updatedProduct });
 
