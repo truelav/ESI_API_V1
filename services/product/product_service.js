@@ -3,6 +3,7 @@ import { extractSubcategory, transformPrice } from '../../utils/product.utils.js
 
 export const updateProductService = (newProducts, row) => {
   const rowCategory = row.Category;
+
   let numPrice = transformPrice(row.Price);
   const [category, subcategory] = extractSubcategory(rowCategory);
 

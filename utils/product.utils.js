@@ -1,17 +1,19 @@
-export const extractSubcategory = (categoryRow) => {
+export const extractSubcategory = (rowCategory) => {
   let result = ['unknown', null];
-  console.log(categoryRow);
-  if (!categoryRow) {
+
+  //   console.log(rowCategory);
+
+  if (!rowCategory) {
     return result;
   }
 
-  if (categoryRow.includes('-')) {
-    const firstDashIndex = categoryRow.indexOf('-');
-    let category = categoryRow.substring(0, firstDashIndex).trim();
-    let subcategory = categoryRow.substring(firstDashIndex + 1).trim();
+  if (rowCategory.includes('-')) {
+    const firstDashIndex = rowCategory.indexOf('-');
+    let category = rowCategory.substring(0, firstDashIndex).trim();
+    let subcategory = rowCategory.substring(firstDashIndex + 1).trim();
     result = [category, subcategory];
   } else {
-    result[0] = categoryRow;
+    result[0] = rowCategory;
   }
   return result;
 };
