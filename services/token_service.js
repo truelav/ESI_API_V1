@@ -1,26 +1,37 @@
-import jwt from "jsonwebtoken";
-import JWToken from "../models/JWToken/JWToken.js";
+import jwt from 'jsonwebtoken';
+import JWToken from '../models/JWToken/JWToken.js';
+
+const JWT_ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
+
+export const decodeTokenFromCookie = (cookie) => {
+  if (!cookie) return null;
+  const cookieData = cookie;
+  const authToken = cookieData.split('=')[1];
+  const decodedToken = jwt.decode(authToken, JWT_ACCESS_TOKEN_SECRET, ['HS256']);
+  if (!decodedToken) return null;
+  return decodedToken;
+};
 
 export const generateTokens = (payload) => {
   const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, {
-    expiresIn: "5m",
+    expiresIn: '5m',
   });
   const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_TOKEN_SECRET, {
-    expiresIn: "1d",
+    expiresIn: '1d',
   });
   return { accessToken, refreshToken };
 };
 
 export const generateAccessToken = (payload) => {
   const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, {
-    expiresIn: "5m",
+    expiresIn: '5m',
   });
   return accessToken;
 };
 
 export const generateRefreshToken = (payload) => {
   const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_TOKEN_SECRET, {
-    expiresIn: "1d",
+    expiresIn: '1d',
   });
   return refreshToken;
 };

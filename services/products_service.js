@@ -1,7 +1,5 @@
-import fs from 'fs';
 import env from 'dotenv';
 import Product from '../models/Product/Product.Schema.js';
-import { deleteImage } from '../utils/files/files.js';
 
 const NODE_ENV = process.env.NODE_ENV;
 const STATIC_URL_DEVELOPMENT = process.env.STATIC_URL_DEVELOPMENT;
@@ -14,12 +12,11 @@ export const findProductService = async (data) => {
 
 export const updateProductImageService = (product, imageFile) => {
   let images = product.images;
-  if (imageFile) {
-    if (NODE_ENV === 'development') {
-      images = STATIC_URL_DEVELOPMENT + '/images/' + imageFile.filename;
-    } else {
-      images = STATIC_URL_PRODUCTION + '/images/' + imageFile.filename;
-    }
+
+  if (imageFile && NODE_ENV === 'development') {
+    images = STATIC_URL_DEVELOPMENT + '/images/' + imageFile.filename;
+  } else if (imageFile && NODE_ENV !== 'development') {
+    images = STATIC_URL_PRODUCTION + '/images/' + imageFile.filename;
   }
 
   return images;
