@@ -1,7 +1,7 @@
 import User from '../../models/User/User.js';
 import { decodeTokenFromCookie } from '../../services/token_service.js';
 
-const isAdming = async (req, res, next) => {
+const isUser = async (req, res, next) => {
   try {
     const decodedToken = decodeTokenFromCookie(req.headers.cookie);
     if (!decodedToken) {
@@ -14,9 +14,6 @@ const isAdming = async (req, res, next) => {
     if (!user) {
       return res.status(500).json({ message: `user not found` });
     }
-    if (role !== 'USER') {
-      return res.status(500).json({ message: `unauthorized` });
-    }
 
     next();
   } catch (error) {
@@ -25,4 +22,4 @@ const isAdming = async (req, res, next) => {
   }
 };
 
-export default isAdming;
+export default isUser;
