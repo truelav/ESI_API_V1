@@ -1,7 +1,8 @@
-import express from "express";
-import * as ProductControllers from "../../controllers/Product/index.js";
-import { upload } from "../../middleware/upload/index.js";
-import { uploadProductsFile } from "../../middleware/upload/uploadProductsFile.js";
+import express from 'express';
+import * as ProductControllers from '../../controllers/Product/index.js';
+import { upload } from '../../middleware/upload/index.js';
+import { uploadProductsFile } from '../../middleware/upload/uploadProductsFile.js';
+import isAdmin from '../../middleware/auth/isAdmin.js';
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ const router = express.Router();
  *       404:
  *         description: Product not found
  */
-router.get("/", ProductControllers.getAllProducts);
+router.get('/', ProductControllers.getAllProducts);
 
 /**
  * @openapi
@@ -54,7 +55,7 @@ router.get("/", ProductControllers.getAllProducts);
  *       404:
  *         description: Product not found
  */
-router.get("/brandedProducts", ProductControllers.getBrandedProducts);
+router.get('/brandedProducts', ProductControllers.getBrandedProducts);
 
 /**
  * @openapi
@@ -84,10 +85,9 @@ router.get("/brandedProducts", ProductControllers.getBrandedProducts);
  *       404:
  *         description: Product not found
  */
-router.get("/transformedProducts", ProductControllers.getTransformedProductsBy)
+router.get('/transformedProducts', ProductControllers.getTransformedProductsBy);
 
-
- /**
+/**
  * @openapi
  * '/api/products/{id}':
  *  get:
@@ -110,10 +110,9 @@ router.get("/transformedProducts", ProductControllers.getTransformedProductsBy)
  *       404:
  *         description: Product not found
  */
-router.get("/:id", ProductControllers.getSingleProduct);
+router.get('/:id', ProductControllers.getSingleProduct);
 
-
- /**
+/**
  * @openapi
  * '/api/products/{id}':
  *  delete:
@@ -133,9 +132,7 @@ router.get("/:id", ProductControllers.getSingleProduct);
  *       404:
  *         description: Product not found
  */
-router.delete("/:id", ProductControllers.deleteSingleProduct);
-
-
+router.delete('/:id', isAdmin, ProductControllers.deleteSingleProduct);
 
 /**
  * @openapi
@@ -163,11 +160,9 @@ router.delete("/:id", ProductControllers.deleteSingleProduct);
  *       404:
  *         description: Products not found.
  */
- router.delete("/", ProductControllers.deleteMultipleProducts);
+router.delete('/', isAdmin, ProductControllers.deleteMultipleProducts);
 
-
-
- /**
+/**
  * @openapi
  * '/api/products/{id}':
  *  put:
@@ -197,41 +192,39 @@ router.delete("/:id", ProductControllers.deleteSingleProduct);
  *       404:
  *         description: Product not found
  */
-router.put("/:id", upload.single("images"), ProductControllers.editSingleProduct);
-
+router.put('/:id', upload.single('images'), ProductControllers.editSingleProduct);
 
 /**
-* @openapi
-* '/api/products/{id}':
-*  post:
-*     tags:
-*     - Product
-*     summary: Create a single product
-*     parameters:
-*      - name: id
-*        in: path
-*        description: The id of the product
-*        required: true
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             $ref: '#/components/schema/Product'
-*     responses:
-*       200:
-*         description: Success
-*         content:
-*          application/json:
-*           schema:
-*              $ref: '#/components/schema/productResponse'
-*       403:
-*         description: Forbidden
-*       404:
-*         description: Product not found
-*/
-router.post("/", upload.single("image"), ProductControllers.addSingleProduct);
-
+ * @openapi
+ * '/api/products/{id}':
+ *  post:
+ *     tags:
+ *     - Product
+ *     summary: Create a single product
+ *     parameters:
+ *      - name: id
+ *        in: path
+ *        description: The id of the product
+ *        required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schema/Product'
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *          application/json:
+ *           schema:
+ *              $ref: '#/components/schema/productResponse'
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Product not found
+ */
+router.post('/', upload.single('image'), ProductControllers.addSingleProduct);
 
 /**
  * @openapi
@@ -255,13 +248,13 @@ router.post("/", upload.single("image"), ProductControllers.addSingleProduct);
  *       200:
  *         description: CSV file uploaded successfully.
  *         content:
- *         schema: 
+ *         schema:
  *           type: object
  *           properties:
  *             message: string
  *       400:
  *         description: Invalid request. Please provide a CSV file.
  */
-router.post("/addMultiple", uploadProductsFile.single("csv"), ProductControllers.addMultipleProducts);
+router.post('/addMultiple', uploadProductsFile.single('csv'), ProductControllers.addMultipleProducts);
 
 export default router;
